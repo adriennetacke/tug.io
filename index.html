@@ -1,0 +1,70 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Tug O' War</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+</head>
+<body>
+  <button id="reset">Reset</button>
+  
+  <button id="playerOne" style="padding: 50px; font-size: 20px;">Player 1</button>
+  <input id="score" type="text" value="0" disabled>
+  <button id="playerTwo" style="padding: 50px; font-size: 20px;">Player 2</button>
+  <h1 id="winnerLabel"></h1>
+  <img id="winner" src="https://media.giphy.com/media/oFI7FttD0iC8V2Iqmy/giphy.gif" hidden>
+
+  <script>
+    const socket = io(location.origin);
+
+    const reset = document.getElementById('reset');
+    const playerOne = document.getElementById('playerOne');
+    const playerTwo = document.getElementById('playerTwo');
+    const score = document.getElementById('score');
+
+    const winnerLabel = document.getElementById('winnerLabel');
+    const winnerGif = document.getElementById('winner');
+
+    socket.on('connect', () => {
+      console.log('Connection successful...');
+    });
+
+    socket.on('score', (data) => {
+      const total = data.playerTwo - data.playerOne;
+
+      winnerLabel.innerText = total >= 50 
+        ? 'Player 2 is the winner!' 
+        : total <= -50 
+          ? 'Player 1 is the winner1' 
+          : 'TUG!';
+      
+      if (total >= 50 || total <= -50) {
+        winnerGif.hidden = false;
+        playerOne.disabled = true;
+        playerTwo.disabled = true;      
+      };
+
+      score.setAttribute('value', total);
+    });
+
+    reset.addEventListener('click', () => {
+      socket.emit('reset');
+      
+      winnerGif.hidden = true;
+      playerOne.disabled = false;
+      playerTwo.disabled = false;    
+      winnerLabel.innerText = "TUG!";
+    });
+
+    playerOne.addEventListener('click', () => {
+      socket.emit('tug', { team: '1' });
+    });
+
+    playerTwo.addEventListener('click', () => {
+      socket.emit('tug', { team: '2' });
+    });
+
+  </script>
+</body>
+</html>

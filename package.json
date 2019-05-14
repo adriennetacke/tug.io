@@ -1,0 +1,14 @@
+{
+  "name": "tug.io",
+  "version": "1.0.0",
+  "description": "A simple tug of war game.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Adrienne Tacke <adrienne.tacke@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "socket.io": "^2.2.0"
+  }
+}
